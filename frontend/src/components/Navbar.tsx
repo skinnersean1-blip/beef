@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Flame, User, LogOut, Wallet } from 'lucide-react';
+import { Search, Flame, User, LogOut, Wallet, Heart } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Navbar: React.FC = () => {
@@ -50,6 +50,14 @@ const Navbar: React.FC = () => {
               </div>
 
               <Link
+                to="/responsible-gaming"
+                className="p-2 hover:bg-beef-gray rounded-lg transition"
+                title="Responsible Gaming & Help"
+              >
+                <Heart className="w-5 h-5 text-red-500" />
+              </Link>
+
+              <Link
                 to="/profile"
                 className="flex items-center space-x-2 hover:bg-beef-gray px-3 py-2 rounded-lg transition"
               >
@@ -67,6 +75,14 @@ const Navbar: React.FC = () => {
             </div>
           ) : (
             <div className="flex items-center space-x-4">
+              <Link
+                to="/responsible-gaming"
+                className="text-white hover:text-beef-red transition flex items-center space-x-1"
+                title="Responsible Gaming"
+              >
+                <Heart className="w-4 h-4" />
+                <span>Help</span>
+              </Link>
               <Link
                 to="/login"
                 className="text-white hover:text-beef-red transition"

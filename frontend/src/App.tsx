@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import DebateDetail from './pages/DebateDetail';
+import ResponsibleGaming from './pages/ResponsibleGaming';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, loading } = useAuth();
@@ -38,6 +39,7 @@ const AppRoutes: React.FC = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/debates/:id" element={<DebateDetail />} />
+        <Route path="/responsible-gaming" element={<ResponsibleGaming />} />
         <Route
           path="/login"
           element={user ? <Navigate to="/" /> : <Login />}
