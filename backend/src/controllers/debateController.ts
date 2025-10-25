@@ -176,7 +176,7 @@ export class DebateController {
         if (aiResult.determination === 'CREATOR') {
           winnerId = debate.creatorId;
         } else if (aiResult.determination === 'CHALLENGER') {
-          winnerId = debate.challengerId;
+          winnerId = debate.challengerId || undefined;
         }
 
         determination = 'AI_VERIFICATION';
