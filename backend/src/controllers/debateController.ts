@@ -162,7 +162,7 @@ export class DebateController {
           .map((c) => c.content);
 
         const challengerComments = debate.comments
-          .filter((c) => c.authorId === debate.challengerId)
+          .filter((c) => debate.challengerId && c.authorId === debate.challengerId)
           .map((c) => c.content);
 
         const aiResult = await aiService.factCheckDebate(
