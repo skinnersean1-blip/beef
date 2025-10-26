@@ -33,6 +33,7 @@ app.get('/health', (req, res) => {
 // Auth routes
 app.post('/api/auth/register', authController.register);
 app.post('/api/auth/login', authController.login);
+app.get('/api/auth/referrals', authenticate, authController.getReferralStats);
 
 // Debate routes
 app.get('/api/debates', authenticate, debateController.getDebates);

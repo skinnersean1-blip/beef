@@ -14,6 +14,8 @@ model User {
   password      String
   displayName   String
   walletBalance Float    @default(0)
+  referralCode  String   @unique @default(cuid())
+  referredById  String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -26,6 +28,10 @@ model User {
   bets              Bet[]
   transactions      Transaction[]
   notifications     Notification[]
+
+  // Referral relations
+  referredBy        User?         @relation("Referrals", fields: [referredById], references: [id], onDelete: SetNull)
+  referrals         User[]        @relation("Referrals")
 }
 
 enum DebateStatus {

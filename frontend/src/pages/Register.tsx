@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 export const Register: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const referralCode = searchParams.get('ref');
+
   const [formData, setFormData] = useState({
     email: '',
     username: '',
     password: '',
     displayName: '',
+    referralCode: referralCode || '',
   });
   const [error, setError] = useState('');
   const { register } = useAuth();
@@ -30,7 +34,12 @@ export const Register: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-beef-secondary">
       <div className="bg-beef-gray p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 className="text-3xl font-bold text-beef-primary mb-6">🔥 Join Beef</h1>
+        <h1 className="text-3xl font-bold text-beef-primary mb-6">Join Beef</h1>
+        {referralCode && (
+          <div className="bg-green-500/20 border border-green-500 text-green-200 px-4 py-3 rounded mb-4">
+            You'll get an extra $25 bonus for signing up with a referral!
+          </div>
+        )}
         {error && (
           <div className="bg-red-500/20 border border-red-500 text-red-200 px-4 py-3 rounded mb-4">
             {error}

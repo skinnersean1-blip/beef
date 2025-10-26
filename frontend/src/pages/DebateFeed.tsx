@@ -7,7 +7,17 @@ export const DebateFeed: React.FC = () => {
   const [debates, setDebates] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [copied, setCopied] = useState(false);
   const { user } = useAuth();
+
+  const inviteUrl = user ? `${window.location.origin}/register?ref=${user.referralCode}` : '';
+
+  const copyInviteLink = () => {
+    navigator.clipboard.writeText(inviteUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     loadDebates();
@@ -42,6 +52,12 @@ export const DebateFeed: React.FC = () => {
           <h1 className="text-2xl font-bold text-beef-primary">Beef</h1>
           <div className="flex items-center gap-4">
             <span className="text-beef-light">Wallet: {user && `$${user.walletBalance.toFixed(2)}`}</span>
+            <button
+              onClick={() => setShowInviteModal(true)}
+              className="bg-green-600 text-white px-4 py-2 rounded font-semibold hover:bg-green-700 transition"
+            >
+              Invite Friends
+            </button>
             <Link
               to="/create"
               className="bg-beef-primary text-white px-4 py-2 rounded font-semibold hover:bg-orange-600 transition"
@@ -111,6 +127,35 @@ export const DebateFeed: React.FC = () => {
           </div>
         )}
       </div>
+
+      {showInviteModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowInviteModal(false)}>
+          <div className="bg-beef-gray p-8 rounded-lg shadow-lg w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-2xl font-bold text-beef-primary mb-4">Invite Friends</h2>
+            <p className="text-beef-light mb-4">
+              Share your invite link and earn $50 for each friend who joins! They'll get an extra $25 bonus too.
+            </p>
+            <div className="bg-beef-secondary p-4 rounded mb-4">
+              <p className="text-sm text-gray-400 mb-2">Your Invite Link:</p>
+              <p className="text-beef-light break-all">{inviteUrl}</p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={copyInviteLink}
+                className="flex-1 bg-beef-primary text-white py-2 rounded font-semibold hover:bg-orange-600 transition"
+              >
+                {copied ? 'Copied!' : 'Copy Link'}
+              </button>
+              <button
+                onClick={() => setShowInviteModal(false)}
+                className="flex-1 bg-gray-600 text-white py-2 rounded font-semibold hover:bg-gray-700 transition"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
