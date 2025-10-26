@@ -8,16 +8,20 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(uuid())
-  email         String   @unique
-  username      String   @unique
-  password      String
-  displayName   String
-  walletBalance Float    @default(0)
-  referralCode  String   @unique @default(cuid())
-  referredById  String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id               String    @id @default(uuid())
+  email            String    @unique
+  username         String    @unique
+  password         String
+  displayName      String
+  walletBalance    Float     @default(0)    // Play money balance
+  realMoneyBalance Float     @default(0)    // Real money balance (Stripe)
+  stripeCustomerId String?                  // Stripe customer ID
+  referralCode     String    @unique @default(cuid())
+  referredById     String?
+  tosAccepted      Boolean   @default(false)
+  tosAcceptedAt    DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   // Relations
   debatesCreated    Debate[]      @relation("DebateCreator")

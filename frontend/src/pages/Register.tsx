@@ -12,6 +12,7 @@ export const Register: React.FC = () => {
     password: '',
     displayName: '',
     referralCode: referralCode || '',
+    tosAccepted: false,
   });
   const [error, setError] = useState('');
   const { register } = useAuth();
@@ -19,6 +20,12 @@ export const Register: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!formData.tosAccepted) {
+      setError('You must accept the Terms of Service');
+      return;
+    }
+
     try {
       await register(formData);
       navigate('/');
@@ -28,7 +35,8 @@ export const Register: React.FC = () => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+    setFormData({ ...formData, [e.target.name]: value });
   };
 
   return (
@@ -79,7 +87,7 @@ export const Register: React.FC = () => {
               required
             />
           </div>
-          <div className="mb-6">
+          <div className="mb-4">
             <label className="block text-beef-light mb-2">Password</label>
             <input
               type="password"
@@ -89,6 +97,28 @@ export const Register: React.FC = () => {
               className="w-full px-4 py-2 bg-beef-secondary text-beef-light rounded border border-beef-gray focus:border-beef-primary focus:outline-none"
               required
             />
+          </div>
+          <div className="mb-6">
+            <label className="flex items-start gap-2 text-sm text-beef-light cursor-pointer">
+              <input
+                type="checkbox"
+                name="tosAccepted"
+                checked={formData.tosAccepted}
+                onChange={handleChange}
+                className="mt-1"
+                required
+              />
+              <span>
+                I am at least 18 years old and I accept the{' '}
+                <a
+                  href="/terms"
+                  target="_blank"
+                  className="text-beef-primary hover:underline"
+                >
+                  Terms of Service
+                </a>
+              </span>
+            </label>
           </div>
           <button
             type="submit"

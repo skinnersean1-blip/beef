@@ -6,6 +6,7 @@ import { Register } from './pages/Register';
 import { DebateFeed } from './pages/DebateFeed';
 import { CreateDebate } from './pages/CreateDebate';
 import { DebateView } from './pages/DebateView';
+import { Terms } from './pages/Terms';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, loading } = useAuth();
@@ -36,6 +37,7 @@ const AppRoutes: React.FC = () => {
     <Routes>
       <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
       <Route path="/register" element={user ? <Navigate to="/" /> : <Register />} />
+      <Route path="/terms" element={<Terms />} />
       <Route
         path="/"
         element={

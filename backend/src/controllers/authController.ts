@@ -7,11 +7,16 @@ const prisma = new PrismaClient();
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { email, username, password, displayName, referralCode } = req.body;
+    const { email, username, password, displayName, referralCode, tosAccepted } = req.body;
 
     // Validate input
     if (!email || !username || !password || !displayName) {
       return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    // Validate ToS acceptance
+    if (!tosAccepted) {
+      return res.status(400).json({ error: 'You must accept the Terms of Service' });
     }
 
     // Check if user exists
@@ -52,6 +57,8 @@ export const register = async (req: Request, res: Response) => {
         displayName,
         walletBalance: baseBonus + referralBonus,
         referredById: referrer?.id,
+        tosAccepted: true,
+        tosAcceptedAt: new Date(),
       },
     });
 
