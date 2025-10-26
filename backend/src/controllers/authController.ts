@@ -1,83 +1,112 @@
-import { Request, Response, NextFunction } from 'express';
-import { AuthService } from '../services/authService';
-import { AuthRequest } from '../types';
+import { Request, Response } from 'express';
+import bcrypt from 'bcryptjs';
+import { PrismaClient } from '@prisma/client';
+import { generateToken } from '../utils/jwt';
 
-const authService = new AuthService();
+const prisma = new PrismaClient();
 
-export class AuthController {
-  async register(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { email, username, password, displayName } = req.body;
+export const register = async (req: Request, res: Response) => {
+  try {
+    const { email, username, password, displayName } = req.body;
 
-      if (!email || !username || !password || !displayName) {
-        return res.status(400).json({ error: 'All fields are required' });
-      }
+    // Validate input
+    if (!email || !username || !password || !displayName) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
 
-      const result = await authService.register({
+    // Check if user exists
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [{ email }, { username }],
+      },
+    });
+
+    if (existingUser) {
+      return res.status(400).json({ error: 'User already exists' });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create user
+    const user = await prisma.user.create({
+      data: {
         email,
         username,
-        password,
+        password: hashedPassword,
         displayName,
-      });
+        walletBalance: 100, // Starting bonus
+      },
+    });
 
-      res.status(201).json(result);
-    } catch (error) {
-      next(error);
-    }
+    // Generate token
+    const token = generateToken({
+      userId: user.id,
+      email: user.email,
+      username: user.username,
+    });
+
+    res.status(201).json({
+      message: 'User created successfully',
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        displayName: user.displayName,
+        walletBalance: user.walletBalance,
+      },
+    });
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({ error: 'Registration failed' });
   }
+};
 
-  async login(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { email, password } = req.body;
+export const login = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
 
-      if (!email || !password) {
-        return res.status(400).json({ error: 'Email and password are required' });
-      }
-
-      const result = await authService.login(email, password);
-
-      res.json(result);
-    } catch (error) {
-      next(error);
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
     }
-  }
 
-  async getProfile(req: AuthRequest, res: Response, next: NextFunction) {
-    try {
-      const userId = req.user!.userId;
-      const profile = await authService.getProfile(userId);
+    // Find user
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
 
-      res.json(profile);
-    } catch (error) {
-      next(error);
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
-  }
 
-  async updateProfile(req: AuthRequest, res: Response, next: NextFunction) {
-    try {
-      const userId = req.user!.userId;
-      const { displayName, bio, avatar } = req.body;
+    // Verify password
+    const isValid = await bcrypt.compare(password, user.password);
 
-      const profile = await authService.updateProfile(userId, {
-        displayName,
-        bio,
-        avatar,
-      });
-
-      res.json(profile);
-    } catch (error) {
-      next(error);
+    if (!isValid) {
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
-  }
 
-  async getUserByUsername(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { username } = req.params;
-      const profile = await authService.getProfile(username);
+    // Generate token
+    const token = generateToken({
+      userId: user.id,
+      email: user.email,
+      username: user.username,
+    });
 
-      res.json(profile);
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      message: 'Login successful',
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        displayName: user.displayName,
+        walletBalance: user.walletBalance,
+      },
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ error: 'Login failed' });
   }
-}
+};

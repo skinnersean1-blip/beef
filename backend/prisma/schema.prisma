@@ -1,5 +1,3 @@
-// Beef Platform Database Schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -15,170 +13,129 @@ model User {
   username      String   @unique
   password      String
   displayName   String
-  bio           String?
-  avatar        String?
   walletBalance Float    @default(0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   // Relations
-  debatesCreated     Debate[]      @relation("DebateCreator")
-  debatesAccepted    Debate[]      @relation("DebateChallenger")
-  comments           Comment[]
-  votes              Vote[]
-  betsPlaced         Bet[]
-  transactions       Transaction[]
-  notifications      Notification[]
-
-  @@index([username])
-  @@index([email])
+  debatesCreated    Debate[]      @relation("DebateCreator")
+  debatesChallenged Debate[]      @relation("DebateChallenger")
+  debatesWon        Debate[]      @relation("DebateWinner")
+  comments          Comment[]
+  votes             Vote[]
+  bets              Bet[]
+  transactions      Transaction[]
+  notifications     Notification[]
 }
 
 enum DebateStatus {
-  OPEN          // Waiting for challenger
-  ACTIVE        // Debate in progress
-  EXTENDED      // Debate extended with new ante
-  COMPLETED     // Debate finished
-  CANCELLED     // Debate cancelled
+  OPEN      // Waiting for challenger
+  ACTIVE    // Debate in progress
+  EXTENDED  // Time extended
+  COMPLETED // Debate finished
+  CANCELLED // Debate cancelled
 }
 
 enum WinnerDetermination {
   PENDING
-  CROWD_SUPPORT    // Winner by crowd engagement
-  AI_VERIFICATION  // Winner by AI fact-checking
-  MUTUAL_AGREEMENT // Both parties agreed on winner
-  TIME_EXPIRED     // Winner by default (no response)
+  CROWD_SUPPORT
+  AI_VERIFICATION
+  MANUAL
 }
 
 model Debate {
   id                String              @id @default(uuid())
   topic             String
-  description       String
-  category          String
+  description       String?
+  status            DebateStatus        @default(OPEN)
   initialAnte       Float
   totalPot          Float               @default(0)
-  status            DebateStatus        @default(OPEN)
   startsAt          DateTime?
   endsAt            DateTime?
-  extendedTimes     Int                 @default(0)
-
-  creatorId         String
-  creator           User                @relation("DebateCreator", fields: [creatorId], references: [id])
-  creatorPosition   String              // Creator's stance on the topic
-
-  challengerId      String?
-  challenger        User?               @relation("DebateChallenger", fields: [challengerId], references: [id])
-  challengerPosition String?            // Challenger's stance
-  challengerAnte    Float?
-
-  winnerId          String?
-  winnerDetermination WinnerDetermination @default(PENDING)
-  aiFactCheckScore  Json?               // AI fact-checking results
-
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
+
+  // Participants
+  creatorId         String
+  creator           User                @relation("DebateCreator", fields: [creatorId], references: [id])
+  creatorPosition   String
+  
+  challengerId      String?
+  challenger        User?               @relation("DebateChallenger", fields: [challengerId], references: [id])
+  challengerPosition String?
+
+  // Winner
+  winnerId          String?
+  winner            User?               @relation("DebateWinner", fields: [winnerId], references: [id])
+  winnerDetermination WinnerDetermination @default(PENDING)
+  
+  // AI fact-checking results
+  aiFactCheckScore  Json?
 
   // Relations
   comments          Comment[]
   votes             Vote[]
   bets              Bet[]
-
-  @@index([status])
-  @@index([createdAt])
-  @@index([category])
-  @@index([creatorId])
-  @@index([challengerId])
+  transactions      Transaction[]
+  notifications     Notification[]
 }
 
 enum CommentType {
-  ARGUMENT      // Main debate argument
-  REBUTTAL      // Response to argument
-  EVIDENCE      // Supporting evidence
-  SPECTATOR     // Spectator comment
+  ARGUMENT
+  REBUTTAL
+  EVIDENCE
+  SPECTATOR
 }
 
 model Comment {
-  id          String      @id @default(uuid())
-  content     String
-  type        CommentType @default(ARGUMENT)
-  sources     String[]    // URLs for evidence/citations
+  id        String      @id @default(uuid())
+  content   String
+  type      CommentType
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 
-  debateId    String
-  debate      Debate      @relation(fields: [debateId], references: [id], onDelete: Cascade)
-
-  authorId    String
-  author      User        @relation(fields: [authorId], references: [id])
-
-  parentId    String?
-  parent      Comment?    @relation("CommentReplies", fields: [parentId], references: [id])
-  replies     Comment[]   @relation("CommentReplies")
-
-  votes       Vote[]
-
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-
-  @@index([debateId])
-  @@index([authorId])
-  @@index([createdAt])
-}
-
-enum VoteType {
-  UPVOTE
-  DOWNVOTE
-  SUPPORT_CREATOR    // Support creator to win
-  SUPPORT_CHALLENGER // Support challenger to win
+  // Relations
+  authorId  String
+  author    User        @relation(fields: [authorId], references: [id])
+  
+  debateId  String
+  debate    Debate      @relation(fields: [debateId], references: [id], onDelete: Cascade)
+  
+  votes     Vote[]
 }
 
 model Vote {
-  id          String    @id @default(uuid())
-  type        VoteType
+  id        String   @id @default(uuid())
+  value     Int      // 1 for upvote, -1 for downvote
+  createdAt DateTime @default(now())
 
-  userId      String
-  user        User      @relation(fields: [userId], references: [id])
+  // Relations
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  
+  commentId String?
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  
+  debateId  String?
+  debate    Debate?  @relation(fields: [debateId], references: [id], onDelete: Cascade)
 
-  debateId    String?
-  debate      Debate?   @relation(fields: [debateId], references: [id], onDelete: Cascade)
-
-  commentId   String?
-  comment     Comment?  @relation(fields: [commentId], references: [id], onDelete: Cascade)
-
-  createdAt   DateTime  @default(now())
-
-  @@unique([userId, debateId, type])
-  @@unique([userId, commentId, type])
-  @@index([debateId])
-  @@index([commentId])
-}
-
-enum BetStatus {
-  PENDING
-  ACTIVE
-  WON
-  LOST
-  REFUNDED
+  @@unique([userId, commentId])
+  @@unique([userId, debateId])
 }
 
 model Bet {
-  id              String    @id @default(uuid())
+  id              String   @id @default(uuid())
   amount          Float
-  predictedWinner String    // userId of predicted winner
-  odds            Float     @default(1.0)
-  potentialPayout Float
-  status          BetStatus @default(PENDING)
+  predictedWinner String   // userId of predicted winner
+  odds            Float
+  createdAt       DateTime @default(now())
 
+  // Relations
   userId          String
-  user            User      @relation(fields: [userId], references: [id])
-
+  user            User     @relation(fields: [userId], references: [id])
+  
   debateId        String
-  debate          Debate    @relation(fields: [debateId], references: [id], onDelete: Cascade)
-
-  createdAt       DateTime  @default(now())
-  settledAt       DateTime?
-
-  @@index([userId])
-  @@index([debateId])
-  @@index([status])
+  debate          Debate   @relation(fields: [debateId], references: [id], onDelete: Cascade)
 }
 
 enum TransactionType {
@@ -186,43 +143,38 @@ enum TransactionType {
   WITHDRAWAL
   BET_PLACED
   BET_WON
-  BET_REFUND
-  DEBATE_ANTE
-  DEBATE_WINNINGS
+  BET_LOST
+  ANTE_PLACED
+  ANTE_WON
+  ANTE_LOST
+  EXTENSION_FEE
 }
 
 model Transaction {
   id          String          @id @default(uuid())
-  type        TransactionType
   amount      Float
-  balance     Float           // Balance after transaction
-  description String
-
-  userId      String
-  user        User            @relation(fields: [userId], references: [id])
-
-  relatedDebateId String?
-  relatedBetId    String?
-
+  type        TransactionType
+  description String?
   createdAt   DateTime        @default(now())
 
-  @@index([userId])
-  @@index([createdAt])
+  // Relations
+  userId      String
+  user        User            @relation(fields: [userId], references: [id])
+  
+  debateId    String?
+  debate      Debate?         @relation(fields: [debateId], references: [id], onDelete: SetNull)
 }
 
 model Notification {
   id        String   @id @default(uuid())
-  type      String   // debate_accepted, debate_ended, bet_won, etc.
-  title     String
   message   String
   read      Boolean  @default(false)
-  link      String?
-
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-
   createdAt DateTime @default(now())
 
-  @@index([userId])
-  @@index([read])
+  // Relations
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  
+  debateId  String?
+  debate    Debate?  @relation(fields: [debateId], references: [id], onDelete: Cascade)
 }
