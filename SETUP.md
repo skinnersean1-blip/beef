@@ -1,48 +1,37 @@
 # Beef Platform - Setup Guide
 
-This guide will help you set up and run the Beef debate platform locally.
+🔥 **Welcome to Beef!** This guide will help you get the debate platform running on your Mac.
 
 ## Prerequisites
 
-- Node.js 18+ and npm
-- PostgreSQL 14+
-- Git
+- macOS 10.15 or later
+- Homebrew installed
 
-Or use Docker (recommended for quick setup):
-- Docker
-- Docker Compose
+## Quick Start
 
-## Quick Start with Docker
+Follow these steps **in order**:
 
-The easiest way to get started is using Docker Compose:
+### 1. Install PostgreSQL and Node.js
 
 ```bash
-# Clone the repository
-git clone <your-repo-url>
-cd beef
-
-# Start all services
-docker-compose up
+brew install postgresql@14 node
+brew services start postgresql@14
 ```
 
-This will start:
-- PostgreSQL database on port 5432
-- Backend API on port 5000
-- Frontend app on port 5173
-
-Access the app at: http://localhost:5173
-
-## Manual Setup
-
-### 1. Database Setup
-
-Install and start PostgreSQL, then create a database:
+### 2. Clone and Navigate to Project
 
 ```bash
+cd ~/beef
+```
+
+### 3. Create Database
+
+```bash
+sleep 3
 createdb beef
 ```
 
-### 2. Backend Setup
+### 4. Set Up Backend
 
 ```bash
 cd backend
@@ -50,240 +39,139 @@ cd backend
 # Install dependencies
 npm install
 
-# Create .env file
-cp .env.example .env
-
-# Edit .env and add your configuration:
-# - DATABASE_URL (PostgreSQL connection string)
-# - JWT_SECRET (random secret key)
-# - OPENAI_API_KEY (for AI fact-checking)
-
-# Generate Prisma client
-npx prisma generate
-
-# Run database migrations
-npx prisma migrate dev
-
-# Start the backend server
-npm run dev
-```
-
-The backend will start on http://localhost:5000
-
-### 3. Frontend Setup
-
-In a new terminal:
-
-```bash
-cd frontend
-
-# Install dependencies
-npm install
-
-# Create .env file
-cp .env.example .env
-
-# Edit .env if needed (defaults should work for local development)
-
-# Start the frontend development server
-npm run dev
-```
-
-The frontend will start on http://localhost:5173
-
-## Environment Variables
-
-### Backend (.env)
-
-```env
+# Create environment file
+cat > .env <<'ENVFILE'
 PORT=5000
-NODE_ENV=development
-DATABASE_URL="postgresql://postgres:password@localhost:5432/beef?schema=public"
+DATABASE_URL="postgresql://localhost:5432/beef?schema=public"
 JWT_SECRET=your-super-secret-jwt-key-change-in-production
 JWT_EXPIRES_IN=7d
-OPENAI_API_KEY=your-openai-api-key
+OPENAI_API_KEY=your-openai-api-key-here
 FRONTEND_URL=http://localhost:5173
+NODE_ENV=development
+ENVFILE
+
+# Run database migrations
+npx prisma generate
+npx prisma migrate dev --name init
+
+# Start backend (in background)
+npm run dev > ~/beef-backend.log 2>&1 &
+echo "Backend started! Check logs at ~/beef-backend.log"
 ```
 
-### Frontend (.env)
-
-```env
-VITE_API_URL=http://localhost:5000/api
-VITE_SOCKET_URL=http://localhost:5000
-```
-
-## Database Migrations
-
-To create a new migration after changing the Prisma schema:
+### 5. Set Up Frontend (in a new Terminal window)
 
 ```bash
-cd backend
-npx prisma migrate dev --name your_migration_name
+cd ~/beef/frontend
+
+# Install dependencies
+npm install
+
+# Start frontend
+npm run dev
 ```
 
-To reset the database:
+### 6. Open Beef
 
-```bash
-npx prisma migrate reset
-```
+Once you see "VITE ready" in Terminal, open your browser to:
 
-To view data in Prisma Studio:
+**http://localhost:5173**
 
-```bash
-npx prisma studio
-```
+## Features
 
-## Testing the Application
-
-1. **Register a new account**
-   - Go to http://localhost:5173
-   - Click "Sign Up"
-   - Create an account (you'll get $100 starting balance)
-
-2. **Create a debate**
-   - Click "Create Debate"
-   - Fill in the topic, description, your position, and ante
-   - Submit
-
-3. **Accept a challenge** (with a second account)
-   - Register another account
-   - Find the open debate on the home page
-   - Click "Accept Challenge"
-   - Enter your position and ante
-
-4. **Place bets** (as a spectator)
-   - Create a third account
-   - Navigate to an active debate
-   - Place a bet on who you think will win
-
-5. **Engage in debate**
-   - Post arguments, rebuttals, and evidence
-   - Vote on who's winning
-   - Watch real-time updates
-
-## Features to Test
-
-### Core Features
-- ✅ User registration and authentication
-- ✅ Create debates with antes
-- ✅ Accept debate challenges
-- ✅ Post comments and arguments
-- ✅ Vote on debates and comments
-- ✅ Place bets on debate outcomes
-- ✅ Real-time updates via Socket.io
-- ✅ Search debates
-- ✅ Filter by status and category
-
-### AI Fact-Checking
-To test AI fact-checking, you'll need an OpenAI API key:
-1. Get an API key from https://platform.openai.com
-2. Add it to backend/.env as `OPENAI_API_KEY`
-3. End a debate with "Use AI" option
-
-### Crowd Engagement
-- Post spectator comments
-- Vote to support creator or challenger
-- When a debater gets >70% support with 20+ votes, they can be declared the winner
-
-## Production Deployment
-
-### Important Security Steps
-
-1. **Change all secrets**
-   - Generate a strong JWT_SECRET
-   - Use secure database passwords
-   - Never commit .env files
-
-2. **Set up SSL/TLS**
-   - Use HTTPS for production
-   - Configure reverse proxy (nginx/Apache)
-
-3. **Database**
-   - Use managed PostgreSQL (AWS RDS, DigitalOcean, etc.)
-   - Set up automated backups
-   - Configure connection pooling
-
-4. **Environment Variables**
-   - Set NODE_ENV=production
-   - Configure production database URL
-   - Set FRONTEND_URL to your domain
-
-5. **Betting Compliance**
-   ⚠️ **CRITICAL**: Real-money betting requires:
-   - Gaming licenses in your jurisdiction
-   - KYC/AML compliance
-   - Payment processor integration (not just Stripe)
-   - Legal counsel
-   - Age verification
-   - Responsible gaming features
-
-### Deployment Options
-
-**Option 1: Traditional Hosting**
-- Backend: Deploy to Heroku, DigitalOcean, AWS EC2
-- Frontend: Deploy to Vercel, Netlify, or serve via backend
-- Database: AWS RDS, DigitalOcean Managed Database
-
-**Option 2: Docker/Kubernetes**
-- Build production Docker images
-- Deploy to AWS ECS, Google Cloud Run, or Kubernetes cluster
-- Use managed database service
-
-**Option 3: Serverless**
-- Backend: AWS Lambda, Google Cloud Functions
-- Frontend: Vercel, Netlify
-- Database: PlanetScale, Supabase
+- 💬 **Algorithm-Free Feed** - Chronological debates, no echo chamber
+- 💰 **Betting System** - Spectators can bet on debate outcomes
+- 🤖 **AI Fact-Checking** - GPT-4 powered verification (requires OpenAI API key)
+- 👥 **Crowd Voting** - Community decides winners with 70%+ support
+- ⏰ **24-Hour Debates** - Extendable with additional antes
+- 💸 **Wallet System** - Track your winnings and losses
 
 ## Troubleshooting
 
-### Database Connection Issues
-```bash
-# Check PostgreSQL is running
-psql -U postgres
+### Port 5000 Already in Use
 
-# Verify connection string in .env
-# Make sure DATABASE_URL format is correct
+If you see "port 5000 already in use", disable AirPlay Receiver:
+- System Settings → General → AirDrop & Handoff → Turn OFF "AirPlay Receiver"
+
+### Backend Won't Start
+
+Check the logs:
+```bash
+tail -f ~/beef-backend.log
 ```
 
-### Port Already in Use
-```bash
-# Find and kill process on port 5000
-lsof -ti:5000 | xargs kill
+### Database Connection Errors
 
-# Or use different port in .env
+Make sure PostgreSQL is running:
+```bash
+brew services list
+brew services restart postgresql@14
 ```
 
-### Prisma Issues
-```bash
-# Regenerate Prisma client
-npx prisma generate
+### Fresh Start
 
-# Reset database
-npx prisma migrate reset
+To reset everything:
+```bash
+# Stop processes
+pkill -f nodemon
+pkill -f vite
+
+# Drop and recreate database
+dropdb beef
+createdb beef
+
+# Re-run migrations
+cd ~/beef/backend
+npx prisma migrate dev --name init
 ```
 
-### Frontend Build Issues
-```bash
-# Clear node_modules and reinstall
-rm -rf node_modules package-lock.json
-npm install
-```
+## User Guide
 
-## Development Tips
+### Creating Your First Debate
 
-1. **Database Seeding**: Create a seed script to populate test data
-2. **API Testing**: Use Postman or Thunder Client to test endpoints
-3. **Hot Reload**: Both frontend and backend support hot reload
-4. **Debugging**: Use VS Code debugger for backend
-5. **Logging**: Check console logs for real-time Socket.io events
+1. Register an account (you start with $100)
+2. Click "Start a Beef"
+3. Enter topic, your position, and ante amount
+4. Wait for a challenger to accept
 
-## Support
+### Accepting a Challenge
 
-For issues or questions:
-- Check existing GitHub issues
-- Review the code comments
-- Check the main README.md
+1. Browse the feed for OPEN debates
+2. Click on a debate
+3. Enter your opposing position
+4. Click "Accept Debate" (you must match the ante)
 
-## License
+### Placing Bets
 
-MIT License - See LICENSE file for details
+1. Find an ACTIVE debate
+2. Select who you think will win
+3. Enter bet amount
+4. Click "Place Bet"
+
+### Winning Conditions
+
+**Crowd Support (Auto-Win)**
+- Get 70%+ support from 20+ votes during the debate
+
+**AI Verification**
+- At debate end, use AI fact-checking
+- Claims are verified against GPT-4 knowledge
+- Most verified claims wins
+
+## Default Accounts for Testing
+
+Create these accounts to test:
+- Email: alice@test.com / Password: password123
+- Email: bob@test.com / Password: password123
+
+## Next Steps
+
+- Add your OpenAI API key to `.env` for AI fact-checking
+- Customize the initial wallet balance in `authController.ts`
+- Adjust crowd win threshold in `crowdEngagementService.ts`
+
+---
+
+**Need Help?** Check the logs, read error messages, or review the code comments.
+
+**Happy Debating! 🔥**

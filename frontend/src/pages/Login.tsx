@@ -1,94 +1,68 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Flame } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
-const Login: React.FC = () => {
-  const navigate = useNavigate();
-  const { login } = useAuth();
+export const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setLoading(true);
-
     try {
       await login(email, password);
       navigate('/');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to login');
-    } finally {
-      setLoading(false);
+      setError(err.response?.data?.error || 'Login failed');
     }
   };
 
   return (
-    <div className="min-h-screen bg-beef-dark flex items-center justify-center px-4">
-      <div className="max-w-md w-full">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <Flame className="w-12 h-12 text-beef-red" />
-            <span className="text-4xl font-bold text-white">Beef</span>
+    <div className="min-h-screen flex items-center justify-center bg-beef-secondary">
+      <div className="bg-beef-gray p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h1 className="text-3xl font-bold text-beef-primary mb-6">🔥 Beef Login</h1>
+        {error && (
+          <div className="bg-red-500/20 border border-red-500 text-red-200 px-4 py-3 rounded mb-4">
+            {error}
           </div>
-          <h2 className="text-2xl font-bold text-white">Welcome Back</h2>
-          <p className="text-gray-400 mt-2">Login to start debating</p>
-        </div>
-
-        <div className="bg-beef-gray rounded-lg p-8">
-          {error && (
-            <div className="bg-red-500 bg-opacity-20 border border-red-500 text-red-500 rounded-lg p-4 mb-6">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-white font-semibold mb-2">Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-beef-dark text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-beef-red"
-                placeholder="your@email.com"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-white font-semibold mb-2">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-beef-dark text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-beef-red"
-                placeholder="Enter your password"
-                required
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-beef-red text-white font-bold py-3 rounded-lg hover:bg-red-700 transition disabled:opacity-50"
-            >
-              {loading ? 'Logging in...' : 'Login'}
-            </button>
-          </form>
-
-          <p className="text-center text-gray-400 mt-6">
-            Don't have an account?{' '}
-            <Link to="/register" className="text-beef-red hover:underline">
-              Sign up
-            </Link>
-          </p>
-        </div>
+        )}
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-beef-light mb-2">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2 bg-beef-secondary text-beef-light rounded border border-beef-gray focus:border-beef-primary focus:outline-none"
+              required
+            />
+          </div>
+          <div className="mb-6">
+            <label className="block text-beef-light mb-2">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-2 bg-beef-secondary text-beef-light rounded border border-beef-gray focus:border-beef-primary focus:outline-none"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-beef-primary text-white py-2 rounded font-semibold hover:bg-orange-600 transition"
+          >
+            Login
+          </button>
+        </form>
+        <p className="mt-4 text-center text-beef-light">
+          Don't have an account?{' '}
+          <Link to="/register" className="text-beef-primary hover:underline">
+            Register
+          </Link>
+        </p>
       </div>
     </div>
   );
 };
-
-export default Login;

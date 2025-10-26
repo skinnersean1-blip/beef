@@ -7,12 +7,10 @@ export default {
   theme: {
     extend: {
       colors: {
-        'beef-red': '#DC2626',
-        'beef-dark': '#1a1a1a',
-        'beef-gray': '#2a2a2a',
-      },
-      fontFamily: {
-        'sans': ['Inter', 'system-ui', 'sans-serif'],
+        'beef-primary': '#FF4500',
+        'beef-secondary': '#1A1A1B',
+        'beef-gray': '#343536',
+        'beef-light': '#D7DADC',
       },
     },
   },

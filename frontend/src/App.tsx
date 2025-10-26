@@ -1,20 +1,19 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import Navbar from './components/Navbar';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import DebateDetail from './pages/DebateDetail';
-import ResponsibleGaming from './pages/ResponsibleGaming';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { Login } from './pages/Login';
+import { Register } from './pages/Register';
+import { DebateFeed } from './pages/DebateFeed';
+import { CreateDebate } from './pages/CreateDebate';
+import { DebateView } from './pages/DebateView';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-beef-dark flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-beef-red"></div>
+      <div className="min-h-screen bg-beef-secondary flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-beef-primary"></div>
       </div>
     );
   }
@@ -27,29 +26,41 @@ const AppRoutes: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-beef-dark flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-beef-red"></div>
+      <div className="min-h-screen bg-beef-secondary flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-beef-primary"></div>
       </div>
     );
   }
 
   return (
-    <>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/debates/:id" element={<DebateDetail />} />
-        <Route path="/responsible-gaming" element={<ResponsibleGaming />} />
-        <Route
-          path="/login"
-          element={user ? <Navigate to="/" /> : <Login />}
-        />
-        <Route
-          path="/register"
-          element={user ? <Navigate to="/" /> : <Register />}
-        />
-      </Routes>
-    </>
+    <Routes>
+      <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
+      <Route path="/register" element={user ? <Navigate to="/" /> : <Register />} />
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <DebateFeed />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/create"
+        element={
+          <ProtectedRoute>
+            <CreateDebate />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/debate/:id"
+        element={
+          <ProtectedRoute>
+            <DebateView />
+          </ProtectedRoute>
+        }
+      />
+    </Routes>
   );
 };
 
