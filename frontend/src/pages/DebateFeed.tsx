@@ -39,9 +39,9 @@ export const DebateFeed: React.FC = () => {
     <div className="min-h-screen bg-beef-secondary">
       <nav className="bg-beef-gray border-b border-beef-primary">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-beef-primary">=% Beef</h1>
+          <h1 className="text-2xl font-bold text-beef-primary">Beef</h1>
           <div className="flex items-center gap-4">
-            <span className="text-beef-light">=° {user && `$${user.walletBalance.toFixed(2)}`}</span>
+            <span className="text-beef-light">Wallet: {user && `$${user.walletBalance.toFixed(2)}`}</span>
             <Link
               to="/create"
               className="bg-beef-primary text-white px-4 py-2 rounded font-semibold hover:bg-orange-600 transition"
@@ -93,13 +93,13 @@ export const DebateFeed: React.FC = () => {
                 </span>
               </div>
               <div className="text-sm text-gray-400 mb-3">
-                <span>=d {debate.creator.displayName}</span>
-                {debate.challenger && <span className="ml-4">vs =d {debate.challenger.displayName}</span>}
+                <span>Creator: {debate.creator.displayName}</span>
+                {debate.challenger && <span className="ml-4">vs {debate.challenger.displayName}</span>}
               </div>
               <div className="flex items-center gap-4 text-sm text-gray-400">
-                <span>=° Pot: ${debate.totalPot}</span>
-                <span>=¬ {debate._count.comments} comments</span>
-                <span><² {debate._count.bets} bets</span>
+                <span>Pot: ${debate.totalPot}</span>
+                <span>{debate._count.comments} comments</span>
+                <span>{debate._count.bets} bets</span>
               </div>
             </Link>
           ))}

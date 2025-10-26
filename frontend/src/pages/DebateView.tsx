@@ -92,7 +92,7 @@ export const DebateView: React.FC = () => {
             onClick={() => navigate('/')}
             className="text-beef-primary hover:underline"
           >
-            ê Back to Feed
+            ÔøΩ Back to Feed
           </button>
         </div>
       </nav>
@@ -113,7 +113,7 @@ export const DebateView: React.FC = () => {
                 }`}>
                   {debate.status}
                 </span>
-                <span className="text-gray-400">=∞ ${debate.totalPot}</span>
+                <span className="text-gray-400">=ÔøΩ ${debate.totalPot}</span>
               </div>
             </div>
 
@@ -121,12 +121,12 @@ export const DebateView: React.FC = () => {
               <h2 className="text-xl font-bold text-beef-primary mb-4">Positions</h2>
               <div className="space-y-4">
                 <div>
-                  <p className="text-sm text-gray-400">=d {debate.creator.displayName}</p>
+                  <p className="text-sm text-gray-400">Creator: {debate.creator.displayName}</p>
                   <p className="text-beef-light">{debate.creatorPosition}</p>
                 </div>
                 {debate.challenger ? (
                   <div>
-                    <p className="text-sm text-gray-400">=d {debate.challenger.displayName}</p>
+                    <p className="text-sm text-gray-400">Challenger: {debate.challenger.displayName}</p>
                     <p className="text-beef-light">{debate.challengerPosition}</p>
                   </div>
                 ) : (
@@ -156,7 +156,7 @@ export const DebateView: React.FC = () => {
               <div className="space-y-4 mb-4">
                 {debate.comments.map((c: any) => (
                   <div key={c.id} className="bg-beef-secondary p-4 rounded">
-                    <p className="text-sm text-gray-400 mb-1">=d {c.author.displayName}</p>
+                    <p className="text-sm text-gray-400 mb-1">{c.author.displayName}</p>
                     <p className="text-beef-light">{c.content}</p>
                   </div>
                 ))}

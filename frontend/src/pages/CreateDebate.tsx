@@ -37,13 +37,13 @@ export const CreateDebate: React.FC = () => {
             onClick={() => navigate('/')}
             className="text-beef-primary hover:underline"
           >
-            ê Back to Feed
+            ÔøΩ Back to Feed
           </button>
         </div>
       </nav>
 
       <div className="max-w-3xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-beef-primary mb-6">=% Start a Beef</h1>
+        <h1 className="text-3xl font-bold text-beef-primary mb-6">Start a Beef</h1>
         {error && (
           <div className="bg-red-500/20 border border-red-500 text-red-200 px-4 py-3 rounded mb-4">
             {error}
