@@ -32,7 +32,7 @@ export const createBeef = async (req: AuthRequest, res: Response) => {
     }
 
     // Create beef and deduct ante into escrow
-    const beef = await prisma.$transaction(async (tx) => {
+    const beef = await prisma.$transaction(async (tx: any) => {
       const newBeef = await tx.beef.create({
         data: {
           topic,
@@ -102,7 +102,7 @@ export const acceptBeef = async (req: AuthRequest, res: Response) => {
     }
 
     // Accept beef and place matching ante into escrow
-    const updatedBeef = await prisma.$transaction(async (tx) => {
+    const updatedBeef = await prisma.$transaction(async (tx: any) => {
       const now = new Date();
       const endsAt = new Date(now.getTime() + DEBATE_DURATION_HOURS * 60 * 60 * 1000);
 
@@ -209,7 +209,7 @@ export const withdrawBeef = async (req: AuthRequest, res: Response) => {
     }
 
     // Return ante and mark withdrawn
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       await tx.beef.update({
         where: { id },
         data: { status: 'WITHDRAWN' },
@@ -274,7 +274,7 @@ export const concede = async (req: AuthRequest, res: Response) => {
 
 // Helper function to settle beef and distribute funds
 async function settleBeef(beefId: string, winnerId: string, settlementType: string) {
-  await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx: any) => {
     const beef = await tx.beef.findUnique({ where: { id: beefId } });
     if (!beef) throw new Error('Beef not found');
 
