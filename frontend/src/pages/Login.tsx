@@ -20,10 +20,10 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-beef-white">
-      <div className="bg-beef-mauve-100 p-8 rounded-lg shadow-lg w-full max-w-md border-2 border-beef-brown-500">
-        <h1 className="text-4xl font-bold text-beef-brown-500 mb-6 text-center">BEEF</h1>
-        <p className="text-beef-brown-400 mb-6 text-center">Login to your account</p>
+    <div className="min-h-screen flex items-center justify-center bg-beef">
+      <div className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md">
+        <h1 className="text-6xl font-bold text-beef mb-8 text-center tracking-wider">BEEF</h1>
+        <p className="text-beef mb-6 text-center text-lg">Login to your account</p>
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             {error}
@@ -31,35 +31,35 @@ export const Login: React.FC = () => {
         )}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-beef-brown-700 mb-2 font-semibold">Email</label>
+            <label className="block text-beef mb-2 font-semibold">Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border-2 border-beef-brown-300 rounded focus:border-beef-mauve-500 focus:outline-none"
+              className="w-full px-4 py-2 border-2 border-gray-300 rounded focus:border-beef focus:outline-none"
               required
             />
           </div>
           <div className="mb-6">
-            <label className="block text-beef-brown-700 mb-2 font-semibold">Password</label>
+            <label className="block text-beef mb-2 font-semibold">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border-2 border-beef-brown-300 rounded focus:border-beef-mauve-500 focus:outline-none"
+              className="w-full px-4 py-2 border-2 border-gray-300 rounded focus:border-beef focus:outline-none"
               required
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-beef-mauve-500 text-beef-white py-3 rounded font-bold hover:bg-beef-mauve-600 transition"
+            className="w-full bg-white text-beef py-3 rounded-lg font-bold border-2 border-beef hover:bg-beef hover:text-white transition"
           >
             Login
           </button>
         </form>
-        <p className="mt-4 text-center text-beef-brown-600">
+        <p className="mt-4 text-center text-beef">
           Don't have an account?{' '}
-          <Link to="/register" className="text-beef-mauve-500 hover:underline font-semibold">
+          <Link to="/register" className="text-beef hover:underline font-bold">
             Register
           </Link>
         </p>
