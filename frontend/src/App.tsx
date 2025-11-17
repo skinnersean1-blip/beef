@@ -3,46 +3,70 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
-import { DebateFeed } from './pages/DebateFeed';
-import { CreateDebate } from './pages/CreateDebate';
-import { DebateView } from './pages/DebateView';
-import { Terms } from './pages/Terms';
+import { BeefFeed } from './pages/BeefFeed';
+import { CreateBeef } from './pages/CreateBeef';
+import { BeefDetail } from './pages/BeefDetail';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-beef-secondary flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-beef-primary"></div>
+      <div className="min-h-screen bg-beef-white flex items-center justify-center">
+        <p className="text-beef-brown-500 text-xl">Loading...</p>
       </div>
     );
   }
 
-  return user ? <>{children}</> : <Navigate to="/login" />;
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
 };
 
-const AppRoutes: React.FC = () => {
+const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-beef-secondary flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-beef-primary"></div>
+      <div className="min-h-screen bg-beef-white flex items-center justify-center">
+        <p className="text-beef-brown-500 text-xl">Loading...</p>
       </div>
     );
   }
 
+  if (user) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <>{children}</>;
+};
+
+function AppRoutes() {
   return (
     <Routes>
-      <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
-      <Route path="/register" element={user ? <Navigate to="/" /> : <Register />} />
-      <Route path="/terms" element={<Terms />} />
+      <Route
+        path="/login"
+        element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/register"
+        element={
+          <PublicRoute>
+            <Register />
+          </PublicRoute>
+        }
+      />
       <Route
         path="/"
         element={
           <ProtectedRoute>
-            <DebateFeed />
+            <BeefFeed />
           </ProtectedRoute>
         }
       />
@@ -50,23 +74,23 @@ const AppRoutes: React.FC = () => {
         path="/create"
         element={
           <ProtectedRoute>
-            <CreateDebate />
+            <CreateBeef />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/debate/:id"
+        path="/beef/:id"
         element={
           <ProtectedRoute>
-            <DebateView />
+            <BeefDetail />
           </ProtectedRoute>
         }
       />
     </Routes>
   );
-};
+}
 
-const App: React.FC = () => {
+function App() {
   return (
     <Router>
       <AuthProvider>
@@ -74,6 +98,6 @@ const App: React.FC = () => {
       </AuthProvider>
     </Router>
   );
-};
+}
 
 export default App;

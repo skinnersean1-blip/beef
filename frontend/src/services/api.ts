@@ -9,7 +9,6 @@ const api = axios.create({
   },
 });
 
-// Add token to requests
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -23,15 +22,15 @@ export const authAPI = {
   login: (data: any) => api.post('/auth/login', data),
 };
 
-export const debateAPI = {
-  getDebates: (params?: any) => api.get('/debates', { params }),
-  getDebate: (id: string) => api.get(`/debates/${id}`),
-  createDebate: (data: any) => api.post('/debates', data),
-  acceptDebate: (id: string, data: any) => api.post(`/debates/${id}/accept`, data),
-  finalizeDebate: (id: string, data: any) => api.post(`/debates/${id}/finalize`, data),
-  addComment: (id: string, data: any) => api.post(`/debates/${id}/comments`, data),
-  vote: (data: any) => api.post('/votes', data),
-  placeBet: (data: any) => api.post('/bets', data),
+export const beefAPI = {
+  getBeefs: (params?: any) => api.get('/beefs', { params }),
+  getBeef: (id: string) => api.get(`/beefs/${id}`),
+  createBeef: (data: any) => api.post('/beefs', data),
+  acceptBeef: (id: string, data: any) => api.post(`/beefs/${id}/accept`, data),
+  addPost: (id: string, data: any) => api.post(`/beefs/${id}/posts`, data),
+  withdrawBeef: (id: string) => api.post(`/beefs/${id}/withdraw`),
+  concede: (id: string) => api.post(`/beefs/${id}/concede`),
+  toggleLike: (id: string, isLike: boolean) => api.post(`/beefs/${id}/like`, { isLike }),
 };
 
 export default api;

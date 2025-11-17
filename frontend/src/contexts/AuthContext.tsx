@@ -7,7 +7,6 @@ interface User {
   username: string;
   displayName: string;
   walletBalance: number;
-  referralCode: string;
 }
 
 interface AuthContextType {

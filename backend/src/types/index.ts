@@ -4,25 +4,10 @@ export interface JWTPayload {
   username: string;
 }
 
-export interface AIFactCheckResult {
+export interface WebAnalysisResult {
   creatorScore: number;
   challengerScore: number;
-  determination: 'CREATOR' | 'CHALLENGER' | 'TIE';
+  winner: 'CREATOR' | 'CHALLENGER' | 'DRAW';
   reasoning: string;
-  claims: {
-    creator: string[];
-    challenger: string[];
-  };
-  verifications: {
-    claim: string;
-    verified: boolean;
-    sources: string[];
-  }[];
-}
-
-export interface CrowdEngagementResult {
-  creatorSupport: number;
-  challengerSupport: number;
-  shouldDecide: boolean;
-  winner: string | null;
+  sources: string[];
 }

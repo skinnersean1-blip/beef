@@ -1,17 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link, useSearchParams } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 export const Register: React.FC = () => {
-  const [searchParams] = useSearchParams();
-  const referralCode = searchParams.get('ref');
-
   const [formData, setFormData] = useState({
     email: '',
     username: '',
     password: '',
     displayName: '',
-    referralCode: referralCode || '',
+    phone: '',
     tosAccepted: false,
   });
   const [error, setError] = useState('');
@@ -20,12 +17,10 @@ export const Register: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!formData.tosAccepted) {
       setError('You must accept the Terms of Service');
       return;
     }
-
     try {
       await register(formData);
       navigate('/');
@@ -40,66 +35,72 @@ export const Register: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-beef-secondary">
-      <div className="bg-beef-gray p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 className="text-3xl font-bold text-beef-primary mb-6">Join Beef</h1>
-        {referralCode && (
-          <div className="bg-green-500/20 border border-green-500 text-green-200 px-4 py-3 rounded mb-4">
-            You'll get an extra $25 bonus for signing up with a referral!
-          </div>
-        )}
+    <div className="min-h-screen flex items-center justify-center bg-beef-white py-8">
+      <div className="bg-beef-mauve-100 p-8 rounded-lg shadow-lg w-full max-w-md border-2 border-beef-brown-500">
+        <h1 className="text-4xl font-bold text-beef-brown-500 mb-6 text-center">BEEF</h1>
+        <p className="text-beef-brown-400 mb-6 text-center">Create your account</p>
         {error && (
-          <div className="bg-red-500/20 border border-red-500 text-red-200 px-4 py-3 rounded mb-4">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             {error}
           </div>
         )}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-beef-light mb-2">Email</label>
+            <label className="block text-beef-brown-700 mb-2 font-semibold">Email</label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-beef-secondary text-beef-light rounded border border-beef-gray focus:border-beef-primary focus:outline-none"
+              className="w-full px-4 py-2 border-2 border-beef-brown-300 rounded focus:border-beef-mauve-500 focus:outline-none"
               required
             />
           </div>
           <div className="mb-4">
-            <label className="block text-beef-light mb-2">Username</label>
+            <label className="block text-beef-brown-700 mb-2 font-semibold">Username</label>
             <input
               type="text"
               name="username"
               value={formData.username}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-beef-secondary text-beef-light rounded border border-beef-gray focus:border-beef-primary focus:outline-none"
+              className="w-full px-4 py-2 border-2 border-beef-brown-300 rounded focus:border-beef-mauve-500 focus:outline-none"
               required
             />
           </div>
           <div className="mb-4">
-            <label className="block text-beef-light mb-2">Display Name</label>
+            <label className="block text-beef-brown-700 mb-2 font-semibold">Display Name</label>
             <input
               type="text"
               name="displayName"
               value={formData.displayName}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-beef-secondary text-beef-light rounded border border-beef-gray focus:border-beef-primary focus:outline-none"
+              className="w-full px-4 py-2 border-2 border-beef-brown-300 rounded focus:border-beef-mauve-500 focus:outline-none"
               required
             />
           </div>
           <div className="mb-4">
-            <label className="block text-beef-light mb-2">Password</label>
+            <label className="block text-beef-brown-700 mb-2 font-semibold">Phone (Optional)</label>
+            <input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border-2 border-beef-brown-300 rounded focus:border-beef-mauve-500 focus:outline-none"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-beef-brown-700 mb-2 font-semibold">Password</label>
             <input
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-beef-secondary text-beef-light rounded border border-beef-gray focus:border-beef-primary focus:outline-none"
+              className="w-full px-4 py-2 border-2 border-beef-brown-300 rounded focus:border-beef-mauve-500 focus:outline-none"
               required
             />
           </div>
           <div className="mb-6">
-            <label className="flex items-start gap-2 text-sm text-beef-light cursor-pointer">
+            <label className="flex items-start gap-2 text-sm text-beef-brown-700 cursor-pointer">
               <input
                 type="checkbox"
                 name="tosAccepted"
@@ -109,32 +110,22 @@ export const Register: React.FC = () => {
                 required
               />
               <span>
-                I am at least 18 years old and I accept the{' '}
-                <a
-                  href="/terms"
-                  target="_blank"
-                  className="text-beef-primary hover:underline"
-                >
-                  Terms of Service
-                </a>
+                I am at least 18 years old and accept the Terms of Service
               </span>
             </label>
           </div>
           <button
             type="submit"
-            className="w-full bg-beef-primary text-white py-2 rounded font-semibold hover:bg-orange-600 transition"
+            className="w-full bg-beef-mauve-500 text-beef-white py-3 rounded font-bold hover:bg-beef-mauve-600 transition"
           >
             Register
           </button>
         </form>
-        <p className="mt-4 text-center text-beef-light">
+        <p className="mt-4 text-center text-beef-brown-600">
           Already have an account?{' '}
-          <Link to="/login" className="text-beef-primary hover:underline">
+          <Link to="/login" className="text-beef-mauve-500 hover:underline font-semibold">
             Login
           </Link>
-        </p>
-        <p className="mt-4 text-xs text-center text-gray-500">
-          You must be 18+ to place bets. By registering, you agree to our Terms of Service.
         </p>
       </div>
     </div>
