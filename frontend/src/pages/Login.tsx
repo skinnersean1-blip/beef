@@ -57,12 +57,21 @@ export const Login: React.FC = () => {
             Login
           </button>
         </form>
-        <p className="mt-4 text-center text-beef">
-          Don't have an account?{' '}
-          <Link to="/register" className="text-beef hover:underline font-bold">
-            Register
-          </Link>
-        </p>
+        <div className="mt-4 text-center">
+          <p className="text-beef mb-2">
+            Don't have an account?{' '}
+            <Link to="/register" className="text-beef hover:underline font-bold">
+              Register
+            </Link>
+          </p>
+          <button
+            type="button"
+            onClick={() => alert('Password recovery feature coming soon! Please contact support.')}
+            className="text-beef text-sm hover:underline"
+          >
+            Forgot password?
+          </button>
+        </div>
       </div>
     </div>
   );

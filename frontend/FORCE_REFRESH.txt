@@ -1,0 +1,22 @@
+# FORCE BROWSER REFRESH
+
+The colors are updated in the code but your browser is caching the old styles.
+
+## Do this NOW:
+
+1. **Close your browser completely**
+2. **Reopen a NEW browser window**
+3. **Go to: http://localhost:5173**
+
+OR
+
+1. **Open browser Developer Tools** (F12 or Cmd+Option+I)
+2. **Right-click the refresh button**
+3. **Select "Empty Cache and Hard Reload"**
+
+OR
+
+1. **Use Incognito/Private browsing mode**
+2. **Go to: http://localhost:5173**
+
+The beef color (#B85450) is in the code. Your browser just needs to see it!

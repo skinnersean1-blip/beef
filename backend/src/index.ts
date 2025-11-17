@@ -37,5 +37,5 @@ app.post('/api/beefs/:id/like', authenticate, beefController.toggleLike);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`🔥 Beef v2 API running on port ${PORT}`);
+  console.log(`Beef v2 API running on port ${PORT}`);
 });
