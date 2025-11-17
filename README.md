@@ -1,40 +1,42 @@
-# Beef - Social Debate Platform
+# Beef v2 - Peer-to-Peer Debate Platform
 
-Beef is a revolutionary social media platform that commodifies debate by combining:
-- **Debate Platform**: Post topics and engage in structured debates
-- **Betting System**: Ante up and win based on performance
-- **Crowd Engagement**: Community-driven outcomes
-- **AI Fact-Checking**: Automated verification using web data
-- **Algorithm-Free Feed**: Search-based discovery like Reddit
-- **Modern UX**: TikTok feel + Reddit readability + FanDuel betting
+Beef is a social debate platform where two people can wager on their own debate through peer-to-peer escrow. The platform facilitates structured debates with multiple settlement methods.
 
-## Features
+## Key Features
+
+### Simplified Business Model
+- **Peer-to-Peer Wagering Only**: Two debaters wager against each other directly (no spectator betting)
+- **Escrow System**: Platform holds funds in escrow with 1% fee
+- **Max $1,000 Per Debate**: Limited liability model
+- **Three Settlement Methods**:
+  - 🤖 **Web Analysis**: AI fact-checking via OpenAI GPT-4
+  - 👥 **Crowd Voting**: Like/dislike reactions from spectators
+  - 🏳️ **Concession**: Either party can concede defeat
 
 ### Core Functionality
-- 🎯 Create debate topics with antes (bets)
-- 🥊 Challenge and accept debates with counter-bets
-- 👥 Spectator betting on debate outcomes
-- ⏱️ 24-hour debates (extendable with additional antes)
-- 🤖 AI-powered fact-checking via webscraping
-- 📊 Crowd engagement metrics for determining winners
-- 🔍 Search-based discovery (no algorithmic feed)
-- 💰 Integrated wallet system
+- 🎯 Create debate topics with ante ($1-$1000)
+- 🥊 Accept open debates with matching position
+- 💬 Exchange arguments (500-word limit per post)
+- ⏱️ 24-hour debate duration
+- 📱 Swipe or scroll interface (user selectable)
+- 🔍 Algorithm-free chronological feed
+- 💰 Integrated wallet system with transaction history
 
 ### Tech Stack
 
 #### Backend
-- Node.js + Express + TypeScript
+- Node.js 18+ + Express + TypeScript
 - Prisma ORM + PostgreSQL
-- Socket.io (real-time features)
 - JWT Authentication
-- OpenAI API (fact-checking)
+- OpenAI GPT-4 (web analysis)
+- Stripe SDK (future payment integration)
 
 #### Frontend
-- React + TypeScript
-- Vite (build tool)
-- Tailwind CSS
-- Socket.io Client
-- React Router
+- React 18 + TypeScript
+- Vite 5 (build tool)
+- Tailwind CSS 3 (custom mauve/brown/white theme)
+- react-swipeable (swipe gestures)
+- React Router 6
 
 ## Getting Started
 
@@ -111,24 +113,33 @@ beef/
 ## How Beef Works
 
 ### Debate Flow
-1. User creates a debate topic with an ante
-2. Challenger accepts and matches/raises the ante
-3. Debate begins (24-hour timer starts)
-4. Participants exchange arguments
-5. Spectators can bet on outcomes
-6. Winner determined by:
-   - Crowd engagement (likes, support)
-   - AI fact-checking (optional)
-7. Payouts distributed to winners
+1. **Creator** posts a debate topic with position and ante ($1-$1000)
+2. **Challenger** accepts by posting their counter-position and matching ante
+3. **Debate begins** - 24-hour timer starts, funds held in escrow
+4. **Both parties exchange arguments** (max 500 words per post, unlimited posts)
+5. **Spectators** can view and react with likes/dislikes
+6. **Settlement** via one of three methods:
+   - **Web Analysis**: AI analyzes arguments using GPT-4 and web sources
+   - **Crowd Vote**: Platform counts likes vs dislikes
+   - **Concession**: Either party can concede at any time
+7. **Winner receives** (total pot - 1% platform fee)
 
-### Winning Criteria
-- **Crowd Support**: Overwhelming community engagement
-- **AI Verification**: Fact-checked against internet data
-- **Time Extension**: Debates can be extended with new antes
+### Available Actions
+- **Withdraw**: Creator can withdraw before challenger accepts (full refund)
+- **Concede**: Either party can concede during active debate (opponent wins)
+- **Double Down**: Raise the stakes during active debate (future feature)
+
+### Color Theme
+Custom Tailwind palette:
+- **Mauve** (#8C2D64): Primary brand color
+- **Brown** (#8C552D): Secondary/text color
+- **White** (#FEFEFE): Background
+- **Yellow** (#F4C430): Accent/CTA buttons
+- **Black** (#0A0A0A): Dark text
 
 ## Legal Notice
 
-⚠️ **Important**: This platform involves betting with real money. Ensure compliance with local gambling laws and regulations before deployment. This is an MVP and requires proper licensing, KYC/AML procedures, and regulatory approval for production use.
+⚠️ **Important**: This platform facilitates peer-to-peer wagering between two parties on their own debate performance. This is not a game of chance, but rather a skill-based competition. However, you should still ensure compliance with local laws regarding peer-to-peer contracts and skill-based wagering before deployment. This is an MVP and may require proper licensing and regulatory approval for production use.
 
 ## License
 
