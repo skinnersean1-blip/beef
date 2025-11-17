@@ -22,7 +22,7 @@ model User {
   updatedAt       DateTime @updatedAt
 
   // Relations
-  beefs Created     Beef[]  @relation("BeefCreator")
+  beefsCreated     Beef[]  @relation("BeefCreator")
   beefsAccepted    Beef[]  @relation("BeefChallenger")
   beefsWon         Beef[]  @relation("BeefWinner")
   posts            Post[]
